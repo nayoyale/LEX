@@ -1,30 +1,22 @@
 %{
 #include "y.tab.h"
 #include <ctype.h>
-
-// Declara yylval usando el tipo correcto
-extern YYSTYPE yylval;
 %}
 
 %%
 
-[ \t]   ;  /* Ignorar espacios */
-
-[a-z]   { 
-    yylval = yytext[0] - 'a'; 
-    return LETTER; 
+[ \t]    ; /* Ignorar espacios */
+[A-Z]    { yylval.ival = yytext[0] - 'A'; return VREG; }
+[a-z]    { yylval.ival = yytext[0] - 'a'; return DREG; }
+[0-9]+(\.[0-9]*)?([eE][-+]?[0-9]+)? {
+    yylval.dval = atof(yytext);
+    return CONST;
 }
-
-[0-9]   { 
-    yylval = yytext[0] - '0'; 
-    return DIGIT; 
-}
-
-\n      { return '\n'; }
-.       { return yytext[0]; }
+\n       { return '\n'; }
+.        { return yytext[0]; }
 
 %%
 
-int yywrap() { 
-    return 1; 
+int yywrap(void) {
+    return 1;
 }
